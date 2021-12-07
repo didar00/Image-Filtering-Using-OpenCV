@@ -45,7 +45,21 @@ b[:,1] = a[:,:,1].mean(axis=0)
 b[:,2] = a[:,:,2].mean(axis=0) """
 
 
-b[:,:]  =a[:,:,:].mean(axis=0)
+""" b[:,:]  =a[:,:,:].mean(axis=0)
 print(b)
-print(np.hstack(b))
+print(np.hstack(b)) """
+
+
+from sklearn.preprocessing import normalize
+
+import numpy as np
+
+a = np.array([[  0.,   3.,   6.],
+       [  9.,  12.,  15.],
+       [ 18.,  21.,  24.]])
+
+sum = a.sum()
+print(a/sum)
+       
+print(normalize(a))
 

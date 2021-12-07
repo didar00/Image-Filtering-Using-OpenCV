@@ -1,35 +1,18 @@
 from numpy import ceil, float16
 from numpy.lib.function_base import quantile
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 
-"""
-Kuwahara filter implementation using HSV color space
-"""
-
-# Read the image - Notice that OpenCV reads the images as BRG instead of RGB
-img = cv2.imread('dog.jpg')
-
-img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-
-#img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-""" img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-plt.imshow(img, cmap="gray", vmin=0, vmax=255)
-plt.show() """
 
 
 
-"""
-IMPLEMENTATION
-
-"""
 
 
 def kuwahara_filter(image, win_size):
+    """
+    Kuwahara filter implementation using HSV color space
+    """
     quadrant_size = int(ceil(win_size/2))
-    print(quadrant_size)
     img = image.copy()
 
 
@@ -57,7 +40,7 @@ def kuwahara_filter(image, win_size):
             min_std = np.argmin([std_1, std_2, std_3, std_4])
 
             selected_quad = quads[min_std]
-           if selected_quad[0][0] != selected_quad[0][1] and selected_quad[1][0] != selected_quad[1][1]:
+            if selected_quad[0][0] != selected_quad[0][1] and selected_quad[1][0] != selected_quad[1][1]:
                 new_pixel_val = image[selected_quad[0][0]:selected_quad[0][1], selected_quad[1][0]:selected_quad[1][1],2].mean()
                 img[y,x,2] = new_pixel_val
 
@@ -66,11 +49,17 @@ def kuwahara_filter(image, win_size):
 
 
 def gaussian_formula(x,y,sigma):
-    return (1/(2*np.pi*sigma))*np.exp(-(x**2+y**2)/(2*sigma**2))
+    from sklearn.preprocessing import normalize
+    result = (1/(2*np.pi*(sigma**2)))*np.exp(-(x**2+y**2)/(2*(sigma**2)))
+    # normalize the kernel to avoid cut off with
+    # large sigma values
+    return result/result.sum()
 
 
 def gaussian_filter(image, filter_size, sigma=1):
-    print(image.shape)
+    """
+    Gaussian filter implementation using HSV color space
+    """
     from itertools import product
     img = image[:,:,2]
     center = filter_size//2
@@ -102,9 +91,7 @@ def gaussian_filter(image, filter_size, sigma=1):
 
 def mean_filter(image, filter_size):
     from itertools import product
-    # convert the image into windows
-    # to average them pixel by pixel
-    center = filter_size//2
+
     # new image's dimensions since
     # the border values are discarded
     new_img_height = image.shape[0] - filter_size + 1
@@ -141,6 +128,59 @@ def mean_filter(image, filter_size):
 
 
 
-filtered_image = mean_filter(img,7)
-plt.imshow(filtered_image)
-plt.show()
+
+def filter_(image, filter_name, filter_size, sigma):
+    import matplotlib.pyplot as plt
+    filtered_image = np.empty((1,1))
+    if filter_name == "mean":
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        filtered_image = mean_filter(image, filter_size)
+    elif filter_name == "gaussian":
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        filtered_image = gaussian_filter(image, filter_size, sigma)
+        filtered_image = cv2.cvtColor(image, cv2.COLOR_HSV2RGB)
+    elif filter_name == "kuwahara":
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        #image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+        filtered_image = kuwahara_filter(image, filter_size)
+        filtered_image = cv2.cvtColor(filtered_image, cv2.COLOR_HSV2RGB)
+    
+    # plot the image
+    plt.imshow(filtered_image)
+    plt.show()
+
+
+
+def get_image(image_path):
+    # Read the image - Notice that OpenCV reads the images as BRG instead of RGB
+    return cv2.imread(image_path)
+
+
+if __name__ == '__main__':
+    import argparse
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description='Apply filters to images')
+    parser.add_argument("--image", default="sample_image.jpg",
+                        metavar="path/to/image",
+                        help="'image path'")
+    parser.add_argument("--filter",required=True,
+                        help="'Filter name: mean, gaussian or kuwahara'")
+    parser.add_argument("--size",
+                        default=5,
+                        metavar="5",
+                        help="'Filter size. Must be an odd number. Default value is 5")
+    parser.add_argument("--sigma",
+                        default=1,
+                        help="'Sigma value for Gaussian filter. Default is 1")
+
+    # parse arguments
+    args = parser.parse_args()
+    # get filter name
+    filter_name = args.filter
+    if filter_name != "mean" and filter_name != "gaussian" and filter_name != "kuwahara":
+        raise ValueError("Please enter a valid filter name")
+    if int(args.size)%2 == 0:
+        raise ValueError("Please enter an odd number")
+    
+    filter_(get_image(args.image), filter_name, int(args.size), int(args.sigma))

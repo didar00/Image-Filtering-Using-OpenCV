@@ -9,7 +9,7 @@ python main.py --image=image.jpg --filter=gaussian --size=7 --sigma=2
 ```
 Original Image           |  Kuwahara Filter (Size=7)
 :-------------------------:|:-------------------------:
-<img src="[drawing.jpg](https://user-images.githubusercontent.com/58985190/173013688-5dc83ad1-431e-45d2-bbb4-bd48f4b74ee4.jpg)" alt="drawing" width="200"/>
+<img src="https://user-images.githubusercontent.com/58985190/173013688-5dc83ad1-431e-45d2-bbb4-bd48f4b74ee4.jpg" alt="drawing" width="200"/>
  | ![sculpture_kuwahara_9](https://user-images.githubusercontent.com/58985190/173013730-63c18190-df61-4e1b-97f9-6970d0cf3322.png)
 
 Mean Filter (Size=7)             |  Gaussian Filter (Sigma=7)

@@ -15,3 +15,6 @@ With mean filter of size 7:
 ![sculture_mean_7](https://user-images.githubusercontent.com/58985190/173013767-d3ff682d-06d4-4242-ac30-8c9c55034fc0.png)
 With gaussian filter with sigma of 7:
 ![sculpture_gaussian_7](https://user-images.githubusercontent.com/58985190/173013784-66b7c8fc-3274-4c1f-a06b-93e122a26893.png)
+Solarized dark             |  Solarized Ocean
+:-------------------------:|:-------------------------:
+![sculture_mean_7](https://user-images.githubusercontent.com/58985190/173013767-d3ff682d-06d4-4242-ac30-8c9c55034fc0.png)  |  ![sculpture_gaussian_7](https://user-images.githubusercontent.com/58985190/173013784-66b7c8fc-3274-4c1f-a06b-93e122a26893.png)
